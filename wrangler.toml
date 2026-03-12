@@ -1,0 +1,13 @@
+name = "hojokin-jp"
+main = "web/worker.js"
+compatibility_date = "2024-01-01"
+
+# Cloudflare D1 データベース（本番用）
+# wrangler d1 create hojokin-jp でIDを取得してここに設定
+[[d1_databases]]
+binding = "DB"
+database_name = "hojokin-jp"
+database_id = "placeholder-replace-after-d1-create"
+
+# Cloudflare Pages でフロントを配信する場合はこちらを使う
+# wrangler pages deploy web/ --project-name hojokin-jp

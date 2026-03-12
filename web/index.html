@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>補助金・助成金チェッカー｜hojokin-jp</title>
+  <meta name="description" content="47都道府県の企業向け補助金・助成金を簡単チェック。業種・従業員数・都道府県から対象補助金を絞り込み。" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <h1>🏛️ 補助金・助成金チェッカー</h1>
+  <p>47都道府県＋国の補助金を一括検索。あなたの会社が対象かすぐわかる。</p>
+</header>
+
+<main>
+
+  <!-- チェックリストフォーム -->
+  <div class="checklist-card">
+    <p class="section-title">📋 あなたの会社を教えてください</p>
+
+    <!-- 都道府県 -->
+    <div class="form-group">
+      <label for="pref-select">📍 所在都道府県</label>
+      <select id="pref-select">
+        <option value="">選択してください（全国対象も含む）</option>
+      </select>
+    </div>
+
+    <!-- 従業員数 -->
+    <div class="form-group">
+      <label for="employee-count">👥 従業員数（人）</label>
+      <input type="number" id="employee-count" min="1" max="9999"
+             placeholder="例: 10" />
+    </div>
+
+    <!-- 業種 -->
+    <div class="form-group">
+      <label>🏢 業種（複数選択可）</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" class="industry-check" value="製造業" /><span>製造業</span></label>
+        <label><input type="checkbox" class="industry-check" value="IT・情報通信" /><span>IT・情報通信</span></label>
+        <label><input type="checkbox" class="industry-check" value="小売業" /><span>小売業</span></label>
+        <label><input type="checkbox" class="industry-check" value="卸売業" /><span>卸売業</span></label>
+        <label><input type="checkbox" class="industry-check" value="サービス業" /><span>サービス業</span></label>
+        <label><input type="checkbox" class="industry-check" value="建設業" /><span>建設業</span></label>
+        <label><input type="checkbox" class="industry-check" value="飲食業" /><span>飲食業</span></label>
+        <label><input type="checkbox" class="industry-check" value="農業・水産業" /><span>農業・水産業</span></label>
+        <label><input type="checkbox" class="industry-check" value="バイオ・医療" /><span>バイオ・医療</span></label>
+        <label><input type="checkbox" class="industry-check" value="その他" /><span>その他</span></label>
+      </div>
+    </div>
+
+    <button class="btn-search" id="btn-search">
+      🔍 対象の補助金を調べる
+    </button>
+  </div>
+
+  <!-- 検索結果 -->
+  <div id="results"></div>
+
+</main>
+
+<footer>
+  <p>© 2025 hojokin-jp | 補助金・助成金情報は定期的に更新しています</p>
+  <p style="margin-top:0.3rem;">情報は参考です。申請前に必ず公式サイトをご確認ください。</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
