@@ -566,6 +566,43 @@ a:hover { color: var(--primary-dark); }
 .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
 .feature-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
 
+/* --- Guides Section --- */
+.guides-section { padding: 5rem 0; background: var(--bg); }
+.guides-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem; max-width: 900px; margin: 0 auto;
+}
+.guide-card {
+  background: var(--card-bg); border-radius: var(--radius);
+  padding: 2rem 1.5rem; text-align: center;
+  border: 1px solid var(--border-light);
+  text-decoration: none; color: inherit;
+  transition: transform var(--transition), box-shadow var(--transition);
+  display: flex; flex-direction: column; align-items: center;
+}
+.guide-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+.guide-card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.guide-card h3 {
+  font-size: 1.05rem; font-weight: 700; margin-bottom: 0.8rem;
+  line-height: 1.5; color: var(--text);
+}
+.guide-card p {
+  font-size: 0.85rem; color: var(--text-secondary);
+  line-height: 1.6; margin-bottom: 1rem; flex: 1;
+}
+.guide-card-link {
+  font-size: 0.85rem; font-weight: 600; color: var(--primary);
+  transition: color var(--transition);
+}
+.guide-card:hover .guide-card-link { color: var(--accent); }
+
+@media (max-width: 768px) {
+  .guides-grid { grid-template-columns: 1fr; max-width: 400px; }
+}
+
 /* --- FAQ Section --- */
 .faq-section { padding: 5rem 0; background: var(--bg-alt); }
 .faq-list { max-width: 700px; margin: 0 auto; }

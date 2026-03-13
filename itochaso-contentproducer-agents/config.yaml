@@ -47,6 +47,18 @@ site:
     - id: "api"
       title: "API（将来のD1連携）"
       path: "web/worker.js"
+    - id: "prefecture-guide"
+      title: "都道府県別補助金申請ガイド"
+      path: "web/guides/prefecture-guide.html"
+      seo_target: "都道府県 補助金 申請"
+    - id: "industry-guide"
+      title: "業種別おすすめ補助金まとめ"
+      path: "web/guides/industry-guide.html"
+      seo_target: "業種別 補助金"
+    - id: "sme-subsidy-2026"
+      title: "中小企業の補助金ガイド2026"
+      path: "web/guides/sme-subsidy-2026.html"
+      seo_target: "中小企業 補助金 2026"
 
   data_files:
     - id: "hojokin-data"
@@ -158,8 +170,10 @@ openclaw:
         - "https://www.meti.go.jp/covid-19/index.html"
       schedule: "weekly"
     - type: "municipalities"
-      description: "主要市区町村の補助金（Phase 2）"
-      enabled: false
+      description: "主要市区町村の補助金（Phase 1: 政令指定都市+東京23区）"
+      enabled: true
+      source_list: "data/municipalities_phase1.json"
+      spec: "data/openclaw-crawl-request.md"
       schedule: "bi-weekly"
 
   # データフロー
