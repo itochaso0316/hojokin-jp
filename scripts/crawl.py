@@ -15,6 +15,7 @@ import re
 import os
 from datetime import datetime
 from pathlib import Path
+from typing import Optional, List, Dict, Any
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 from urllib.parse import urljoin
@@ -97,7 +98,7 @@ def init_db():
     print(f"✅ DB初期化完了: {DB_PATH}")
 
 
-def fetch_url(url: str) -> str | None:
+def fetch_url(url: str) -> Optional[str]:
     """URLのHTMLを取得（エラー時はNone）"""
     try:
         req = Request(url, headers={"User-Agent": USER_AGENT})
@@ -139,7 +140,7 @@ def extract_text(html: str) -> str:
     return text[:MAX_TEXT_LENGTH]
 
 
-def extract_hojokin_keywords(text: str, url: str, prefecture: str) -> list[dict]:
+def extract_hojokin_keywords(text: str, url: str, prefecture: str) -> List[Dict[str, Any]]:
     """
     テキストから補助金・助成金のキーワードを抽出して簡易構造化
     注: 本番はstructure.pyでClaude Haikuを使って精度アップ

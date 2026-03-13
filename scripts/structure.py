@@ -17,6 +17,7 @@ import time
 import argparse
 import os
 import sys
+from typing import Optional, Dict, Any
 from pathlib import Path
 from datetime import datetime
 
@@ -30,26 +31,26 @@ MAX_TOKENS = 512
 BATCH_DELAY = 1  # APIレート制限対策
 MAX_RAW_TEXT = 3000  # プロンプトに含めるテキストの上限
 
-SYSTEM_PROMPT = """あなたは日本の補助金・助成金情報を構造化するAIです。
-与えられたテキストから補助金の情報を抽出し、必ずJSON形式で返してください。
-JSONのみ返し、前後に説明文を入れないでください。"""
+SYSTEM_PROMPT = """You are a Japanese subsidy/grant information extractor.
+Extract information from Japanese text and return ONLY valid JSON.
+Rules:
+- Return ONLY the JSON object, no other text
+- Use null for unknown values
+- Keep all string values short and clean
+- Do not include Japanese special quotes like 「」 in JSON strings
+- Escape any special characters properly"""
 
-USER_PROMPT_TEMPLATE = """以下のテキストから補助金・助成金の情報を抽出してください。
+USER_PROMPT_TEMPLATE = """Extract subsidy/grant info from this Japanese text.
 
-都道府県: {prefecture}
-ソースURL: {url}
-テキスト:
+Prefecture: {prefecture}
+URL: {url}
+Text:
 {raw_text}
 
-以下のJSON形式で返してください（不明な項目はnullにしてください）:
-{{
-  "name": "補助金・助成金の正式名称",
-  "target": "対象となる事業者・業種（例: 中小企業、製造業、農業など）",
-  "max_amount": 最大補助金額（整数、円単位。不明はnull）,
-  "deadline": "申請締め切り（例: 2024年3月31日、随時など。不明はnull）",
-  "summary": "概要を100字以内で説明",
-  "is_hojokin": true/false（これが補助金・助成金の情報かどうか）
-}}"""
+Return ONLY this JSON (use null for unknown):
+{{"name":"string","target":"string","max_amount":null,"deadline":null,"summary":"string","is_hojokin":true}}
+
+Replace values with actual data found. Keep strings plain ASCII-safe Japanese. No markdown, no explanation."""
 
 
 def get_api_client():
@@ -69,7 +70,7 @@ def get_api_client():
         sys.exit(1)
 
 
-def structure_item(client, item: dict) -> dict | None:
+def structure_item(client, item: dict) -> Optional[Dict[str, Any]]:
     """Claude Haikuで1件の補助金データを構造化"""
     raw_text = item["raw_text"] or ""
     raw_text = raw_text[:MAX_RAW_TEXT]
@@ -89,14 +90,57 @@ def structure_item(client, item: dict) -> dict | None:
         )
         response_text = message.content[0].text.strip()
 
-        # JSONパース
         # コードブロックを除去
         if "```json" in response_text:
             response_text = response_text.split("```json")[1].split("```")[0].strip()
         elif "```" in response_text:
             response_text = response_text.split("```")[1].split("```")[0].strip()
 
-        data = json.loads(response_text)
+        # JSONの開始・終了を抽出
+        start = response_text.find("{")
+        end = response_text.rfind("}") + 1
+        if start >= 0 and end > start:
+            response_text = response_text[start:end]
+
+        # 壊れたJSONを修復: 未終了の文字列を閉じる
+        try:
+            data = json.loads(response_text)
+        except json.JSONDecodeError:
+            # 行ごとに修復を試みる
+            import re
+            # 途中で切れた行を削除してから再パース
+            lines = response_text.split("\n")
+            clean_lines = []
+            for line in lines:
+                stripped = line.rstrip()
+                # 値が途中で終わっている行を修正
+                if stripped.endswith("...") or (
+                    ":" in stripped and
+                    stripped.count('"') % 2 != 0 and
+                    not stripped.rstrip(",").endswith(("null", "true", "false"))
+                ):
+                    continue
+                clean_lines.append(line)
+            try:
+                data = json.loads("\n".join(clean_lines))
+            except json.JSONDecodeError:
+                # 最終手段: 正規表現でキーと値を抽出
+                result = {}
+                for key in ["name", "target", "summary", "deadline", "is_hojokin"]:
+                    m = re.search(rf'"{key}"\s*:\s*"([^"]*)"', response_text)
+                    if m:
+                        result[key] = m.group(1)
+                for key in ["max_amount"]:
+                    m = re.search(rf'"{key}"\s*:\s*(\d+)', response_text)
+                    if m:
+                        result[key] = int(m.group(1))
+                if not result:
+                    return None
+                data = result
+
+        # リストが返ってきた場合は最初の要素を使う
+        if isinstance(data, list):
+            data = data[0] if data else None
         return data
 
     except json.JSONDecodeError as e:
