@@ -4,66 +4,9 @@
  */
 
 // ============================================================
-// モックデータ（crawl.py + structure.py で生成した本物に差し替え）
+// 実データ（crawl.py + structure.py で生成）
+// data.js から読み込み
 // ============================================================
-const SAMPLE_DATA = [
-  {
-    id: 1, prefecture: "東京都", name: "東京都中小企業振興公社 経営革新助成金",
-    target: "都内中小企業・スタートアップ", max_amount: 2000000,
-    deadline: "2025年3月31日", url: "https://www.tokyo-kosha.or.jp/",
-    summary: "新製品・新サービス開発、生産性向上に取り組む中小企業を支援",
-    employee_min: 1, employee_max: 300, industry: ["製造業", "IT・情報通信", "サービス業"],
-  },
-  {
-    id: 2, prefecture: "東京都", name: "東京都スタートアップ加速化助成事業",
-    target: "創業5年以内のスタートアップ", max_amount: 15000000,
-    deadline: "随時", url: "https://www.tokyo-kosha.or.jp/",
-    summary: "革新的なビジネスモデルで急成長を目指すスタートアップへの助成",
-    employee_min: 1, employee_max: 50, industry: ["IT・情報通信", "バイオ・医療", "その他"],
-  },
-  {
-    id: 3, prefecture: "神奈川県", name: "かながわ中小企業成長支援補助金",
-    target: "県内中小企業", max_amount: 5000000,
-    deadline: "2025年6月30日", url: "https://www.pref.kanagawa.jp/",
-    summary: "設備投資・IT化・海外展開を行う中小企業に最大500万円補助",
-    employee_min: 1, employee_max: 300, industry: ["製造業", "建設業", "小売業"],
-  },
-  {
-    id: 4, prefecture: "大阪府", name: "大阪府中小企業・小規模企業者等設備投資補助金",
-    target: "府内中小企業・小規模事業者", max_amount: 3000000,
-    deadline: "2025年2月28日", url: "https://www.pref.osaka.lg.jp/",
-    summary: "生産設備・IT設備への投資を支援、補助率1/2以内",
-    employee_min: 1, employee_max: 300, industry: ["製造業", "卸売業", "小売業"],
-  },
-  {
-    id: 5, prefecture: "全国（国）", name: "IT導入補助金（デジタル化基盤導入枠）",
-    target: "中小企業・小規模事業者", max_amount: 3500000,
-    deadline: "随時（年数回）", url: "https://www.it-hojo.jp/",
-    summary: "会計・受発注・決済・EC機能を持つITツール導入を支援",
-    employee_min: 1, employee_max: 300, industry: ["製造業", "IT・情報通信", "サービス業", "小売業", "卸売業", "飲食業", "その他"],
-  },
-  {
-    id: 6, prefecture: "全国（国）", name: "ものづくり・商業・サービス生産性向上促進補助金",
-    target: "中小企業・小規模事業者", max_amount: 12500000,
-    deadline: "年数回（公募期間あり）", url: "https://portal.monodukuri-hojo.jp/",
-    summary: "生産性向上・イノベーション投資に最大1,250万円補助",
-    employee_min: 1, employee_max: 300, industry: ["製造業", "サービス業", "その他"],
-  },
-  {
-    id: 7, prefecture: "全国（国）", name: "小規模事業者持続化補助金",
-    target: "小規模事業者（従業員20名以下）", max_amount: 2000000,
-    deadline: "年数回（公募期間あり）", url: "https://s23.jizokukahojokin.info/",
-    summary: "販路開拓・業務効率化に取り組む小規模事業者への補助",
-    employee_min: 1, employee_max: 20, industry: ["製造業", "小売業", "サービス業", "飲食業", "その他"],
-  },
-  {
-    id: 8, prefecture: "愛知県", name: "愛知県中小企業デジタル化支援補助金",
-    target: "県内中小企業", max_amount: 1000000,
-    deadline: "2025年4月30日", url: "https://www.pref.aichi.jp/",
-    summary: "業務システム・ECサイト・テレワーク環境整備を支援",
-    employee_min: 1, employee_max: 300, industry: ["製造業", "IT・情報通信", "サービス業", "小売業"],
-  },
-];
 
 // ============================================================
 // 都道府県リスト
@@ -112,22 +55,16 @@ function onSearch() {
 }
 
 function filterHojokin({ pref, employees, industries }) {
-  return SAMPLE_DATA.filter(item => {
-    // 都道府県フィルター（全国対応・都道府県一致）
-    if (pref) {
-      const isNational = item.prefecture.includes("全国");
-      const isPrefMatch = item.prefecture === pref;
-      if (!isNational && !isPrefMatch) return false;
-    }
-
-    // 従業員数フィルター
-    if (employees > 0) {
-      if (employees < item.employee_min || employees > item.employee_max) return false;
-    }
+  const source = typeof HOJOKIN_DATA !== "undefined" ? HOJOKIN_DATA : [];
+  return source.filter(item => {
+    // 都道府県フィルター
+    if (pref && item.prefecture !== pref) return false;
 
     // 業種フィルター（どれか1つ一致すればOK）
     if (industries.length > 0) {
-      const hasMatch = industries.some(ind => item.industry.includes(ind));
+      const hasMatch = industries.some(ind =>
+        (item.industries || []).includes(ind) || (item.industries || []).includes("その他")
+      );
       if (!hasMatch) return false;
     }
 

@@ -171,7 +171,7 @@ def extract_hojokin_keywords(text: str, url: str, prefecture: str) -> List[Dict[
             pass
 
     if found_names:
-        for name in list(found_names)[:5]:  # 最大5件
+        for name in list(found_names)[:10]:  # 最大10件
             results.append({
                 "prefecture": prefecture,
                 "name": name,
@@ -180,11 +180,11 @@ def extract_hojokin_keywords(text: str, url: str, prefecture: str) -> List[Dict[
                 "deadline": "",  # structure.pyで補完
                 "url": url,
                 "summary": text[:500],
-                "raw_text": text,
+                "raw_text": f"補助金名: {name}\n\n" + text[:2000],  # 名前をヒントに付与
             })
     else:
-        # キーワードが見つからなくてもraw_textとして保存
-        if len(text) > 200:  # 内容がある程度あるページだけ
+        # キーワードが見つからなくてもraw_textとして保存（内容が十分ある場合）
+        if len(text) > 200:
             results.append({
                 "prefecture": prefecture,
                 "name": f"{prefecture}補助金情報",
