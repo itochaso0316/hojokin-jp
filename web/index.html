@@ -3,71 +3,385 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>補助金・助成金チェッカー｜hojokin-jp</title>
-  <meta name="description" content="47都道府県の企業向け補助金・助成金を簡単チェック。業種・従業員数・都道府県から対象補助金を絞り込み。" />
+  <title>助成金・補助金チェックサポーター｜全国の補助金を簡単検索</title>
+  <meta name="description" content="全国47都道府県の企業向け補助金・助成金を簡単チェック。業種・従業員数・都道府県から対象補助金を瞬時に絞り込み。無料で使える補助金検索ツール。" />
+  <meta name="keywords" content="補助金,助成金,中小企業,検索,チェッカー,都道府県,申請" />
+  <meta property="og:title" content="助成金・補助金チェックサポーター" />
+  <meta property="og:description" content="全国47都道府県の補助金・助成金を簡単検索。あなたの会社が対象かすぐわかる。" />
+  <meta property="og:type" content="website" />
+  <link rel="canonical" href="https://hojokin-jp.pages.dev/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<header>
-  <h1>🏛️ 補助金・助成金チェッカー</h1>
-  <p>47都道府県＋国の補助金を一括検索。あなたの会社が対象かすぐわかる。</p>
-</header>
+<!-- ナビゲーション -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <span class="logo-icon">S</span>
+      <span class="logo-text">助成金・補助金<br/><small>チェックサポーター</small></span>
+    </a>
+    <div class="nav-links">
+      <a href="#search">検索する</a>
+      <a href="#features">機能</a>
+      <a href="#faq">よくある質問</a>
+    </div>
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="メニュー">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
 
-<main>
+<!-- ヒーローセクション -->
+<section class="hero" id="hero">
+  <div class="hero-bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-badge">無料で使える補助金検索ツール</div>
+    <h1 class="hero-title">
+      あなたの会社に合う<br/>
+      <span class="gradient-text">補助金・助成金</span>を<br/>
+      すぐに見つける
+    </h1>
+    <p class="hero-sub">
+      全国47都道府県の補助金データを網羅。<br/>
+      3ステップで対象の補助金がわかります。
+    </p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num" id="stat-total">72</span>
+        <span class="stat-label">登録補助金</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">47</span>
+        <span class="stat-label">都道府県対応</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">0</span>
+        <span class="stat-label">円で利用可能</span>
+      </div>
+    </div>
+    <a href="#search" class="hero-cta">
+      今すぐ補助金を探す
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </a>
+  </div>
+</section>
 
-  <!-- チェックリストフォーム -->
-  <div class="checklist-card">
-    <p class="section-title">📋 あなたの会社を教えてください</p>
-
-    <!-- 都道府県 -->
-    <div class="form-group">
-      <label for="pref-select">📍 所在都道府県</label>
-      <select id="pref-select">
-        <option value="">選択してください（全国対象も含む）</option>
-      </select>
+<!-- 検索セクション -->
+<section class="search-section" id="search">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">STEP 1 - 2 - 3</span>
+      <h2>かんたん3ステップ検索</h2>
+      <p>あなたの会社の情報を入力するだけで、対象の補助金・助成金が見つかります。</p>
     </div>
 
-    <!-- 従業員数 -->
-    <div class="form-group">
-      <label for="employee-count">👥 従業員数（人）</label>
-      <input type="number" id="employee-count" min="1" max="9999"
-             placeholder="例: 10" />
-    </div>
+    <div class="search-card">
 
-    <!-- 業種 -->
-    <div class="form-group">
-      <label>🏢 業種（複数選択可）</label>
-      <div class="checkbox-group">
-        <label><input type="checkbox" class="industry-check" value="製造業" /><span>製造業</span></label>
-        <label><input type="checkbox" class="industry-check" value="IT・情報通信" /><span>IT・情報通信</span></label>
-        <label><input type="checkbox" class="industry-check" value="小売業" /><span>小売業</span></label>
-        <label><input type="checkbox" class="industry-check" value="卸売業" /><span>卸売業</span></label>
-        <label><input type="checkbox" class="industry-check" value="サービス業" /><span>サービス業</span></label>
-        <label><input type="checkbox" class="industry-check" value="建設業" /><span>建設業</span></label>
-        <label><input type="checkbox" class="industry-check" value="飲食業" /><span>飲食業</span></label>
-        <label><input type="checkbox" class="industry-check" value="農業・水産業" /><span>農業・水産業</span></label>
-        <label><input type="checkbox" class="industry-check" value="バイオ・医療" /><span>バイオ・医療</span></label>
-        <label><input type="checkbox" class="industry-check" value="その他" /><span>その他</span></label>
+      <!-- 法人番号・会社名で自動入力 -->
+      <div class="corp-lookup-block">
+        <div class="corp-lookup-header">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg>
+          <span>法人番号・会社名から自動入力</span>
+          <button class="corp-toggle" id="corp-toggle" aria-expanded="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+        </div>
+        <div class="corp-lookup-body" id="corp-lookup-body" style="display:none;">
+          <p class="corp-hint">法人番号（13桁）または会社名を入力すると、都道府県が自動で設定されます。</p>
+          <div class="corp-tabs">
+            <button class="corp-tab active" data-tab="number">法人番号で検索</button>
+            <button class="corp-tab" data-tab="name">会社名で検索</button>
+          </div>
+          <!-- 法人番号タブ -->
+          <div class="corp-tab-content active" id="tab-number">
+            <div class="corp-input-row">
+              <input type="text" id="corp-number" class="input-modern" maxlength="13" inputmode="numeric" pattern="\d{13}" placeholder="例: 7000012050002（13桁）" />
+              <button class="btn-corp-search" id="btn-corp-number">検索</button>
+            </div>
+          </div>
+          <!-- 会社名タブ -->
+          <div class="corp-tab-content" id="tab-name">
+            <div class="corp-input-row">
+              <input type="text" id="corp-name" class="input-modern" placeholder="例: トヨタ自動車" />
+              <button class="btn-corp-search" id="btn-corp-name">検索</button>
+            </div>
+            <div class="corp-candidates" id="corp-candidates" style="display:none;"></div>
+          </div>
+          <!-- 結果表示 -->
+          <div class="corp-result" id="corp-result" style="display:none;">
+            <div class="corp-result-card">
+              <div class="corp-result-name" id="corp-result-name"></div>
+              <div class="corp-result-meta" id="corp-result-meta"></div>
+              <button class="btn-corp-apply" id="btn-corp-apply">この情報で検索に反映する</button>
+            </div>
+          </div>
+          <div class="corp-error" id="corp-error" style="display:none;"></div>
+          <div class="corp-loading" id="corp-loading" style="display:none;">
+            <div class="spinner"></div>
+            <span>検索中...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ステップインジケーター -->
+      <div class="step-indicator">
+        <div class="step active" data-step="1"><span>1</span>地域</div>
+        <div class="step-line"></div>
+        <div class="step" data-step="2"><span>2</span>業種</div>
+        <div class="step-line"></div>
+        <div class="step" data-step="3"><span>3</span>検索</div>
+      </div>
+
+      <!-- 都道府県選択（地図 + ドロップダウン） -->
+      <div class="form-block">
+        <label class="form-label">
+          <span class="label-icon">1</span>
+          所在都道府県を選択
+        </label>
+        <div class="pref-selector">
+          <select id="pref-select" class="select-modern">
+            <option value="">全国（すべて表示）</option>
+          </select>
+          <!-- 地方ボタン -->
+          <div class="region-chips" id="region-chips">
+            <button class="region-chip" data-region="hokkaido">北海道</button>
+            <button class="region-chip" data-region="tohoku">東北</button>
+            <button class="region-chip" data-region="kanto">関東</button>
+            <button class="region-chip" data-region="chubu">中部</button>
+            <button class="region-chip" data-region="kinki">近畿</button>
+            <button class="region-chip" data-region="chugoku">中国</button>
+            <button class="region-chip" data-region="shikoku">四国</button>
+            <button class="region-chip" data-region="kyushu">九州・沖縄</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 業種選択 -->
+      <div class="form-block">
+        <label class="form-label">
+          <span class="label-icon">2</span>
+          業種を選択（複数可）
+        </label>
+        <div class="industry-grid" id="industry-grid">
+          <label class="industry-chip"><input type="checkbox" class="industry-check" value="製造業" /><span class="chip-icon">&#x1F3ED;</span><span>製造業</span></label>
+          <label class="industry-chip"><input type="checkbox" class="industry-check" value="IT・情報通信" /><span class="chip-icon">&#x1F4BB;</span><span>IT・情報通信</span></label>
+          <label class="industry-chip"><input type="checkbox" class="industry-check" value="小売業" /><span class="chip-icon">&#x1F6D2;</span><span>小売業</span></label>
+          <label class="industry-chip"><input type="checkbox" class="industry-check" value="卸売業" /><span class="chip-icon">&#x1F4E6;</span><span>卸売業</span></label>
+          <label class="industry-chip"><input type="checkbox" class="industry-check" value="サービス業" /><span class="chip-icon">&#x1F91D;</span><span>サービス業</span></label>
+          <label class="industry-chip"><input type="checkbox" class="industry-check" value="建設業" /><span class="chip-icon">&#x1F3D7;</span><span>建設業</span></label>
+          <label class="industry-chip"><input type="checkbox" class="industry-check" value="飲食業" /><span class="chip-icon">&#x1F37D;</span><span>飲食業</span></label>
+          <label class="industry-chip"><input type="checkbox" class="industry-check" value="農業・水産業" /><span class="chip-icon">&#x1F33E;</span><span>農業・水産業</span></label>
+          <label class="industry-chip"><input type="checkbox" class="industry-check" value="バイオ・医療" /><span class="chip-icon">&#x1F9EC;</span><span>バイオ・医療</span></label>
+          <label class="industry-chip"><input type="checkbox" class="industry-check" value="観光・宿泊" /><span class="chip-icon">&#x1F3E8;</span><span>観光・宿泊</span></label>
+          <label class="industry-chip"><input type="checkbox" class="industry-check" value="その他" /><span class="chip-icon">&#x1F4BC;</span><span>その他</span></label>
+        </div>
+      </div>
+
+      <!-- 従業員数（オプション） -->
+      <div class="form-block">
+        <label class="form-label">
+          <span class="label-icon">3</span>
+          従業員数（任意）
+        </label>
+        <input type="number" id="employee-count" class="input-modern" min="1" max="99999" placeholder="例: 10" />
+      </div>
+
+      <button class="btn-search" id="btn-search">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+        対象の補助金を検索する
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- 結果セクション -->
+<section class="results-section" id="results-section" style="display:none;">
+  <div class="container">
+    <!-- 結果ヘッダー -->
+    <div class="results-header">
+      <div class="results-count" id="results-count"></div>
+      <div class="results-controls">
+        <div class="view-toggle">
+          <button class="view-btn active" data-view="list" title="リスト表示">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          </button>
+          <button class="view-btn" data-view="grid" title="グリッド表示">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </button>
+        </div>
+        <select id="sort-select" class="select-small">
+          <option value="amount-desc">金額が大きい順</option>
+          <option value="amount-asc">金額が小さい順</option>
+          <option value="name-asc">名前順</option>
+          <option value="pref-asc">都道府県順</option>
+        </select>
       </div>
     </div>
 
-    <button class="btn-search" id="btn-search">
-      🔍 対象の補助金を調べる
-    </button>
+    <!-- 比較バー -->
+    <div class="compare-bar" id="compare-bar" style="display:none;">
+      <div class="compare-inner">
+        <span><strong id="compare-count">0</strong>件を比較中</span>
+        <button class="btn-compare" id="btn-compare">比較表を見る</button>
+        <button class="btn-compare-clear" id="btn-compare-clear">クリア</button>
+      </div>
+    </div>
+
+    <!-- 結果リスト -->
+    <div id="results" class="results-list"></div>
   </div>
+</section>
 
-  <!-- 検索結果 -->
-  <div id="results"></div>
+<!-- 比較モーダル -->
+<div class="modal-overlay" id="compare-modal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>補助金比較</h3>
+      <button class="modal-close" id="modal-close">&times;</button>
+    </div>
+    <div class="modal-body" id="compare-table-container"></div>
+  </div>
+</div>
 
-</main>
+<!-- お気に入りフローティングボタン -->
+<button class="fab-favorites" id="fab-favorites" title="お気に入り一覧" style="display:none;">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+  <span class="fab-badge" id="fab-badge">0</span>
+</button>
 
-<footer>
-  <p>© 2025 hojokin-jp | 補助金・助成金情報は定期的に更新しています</p>
-  <p style="margin-top:0.3rem;">情報は参考です。申請前に必ず公式サイトをご確認ください。</p>
+<!-- お気に入りパネル -->
+<div class="favorites-panel" id="favorites-panel" style="display:none;">
+  <div class="panel-header">
+    <h3>お気に入り</h3>
+    <button class="panel-close" id="panel-close">&times;</button>
+  </div>
+  <div class="panel-body" id="favorites-list"></div>
+</div>
+
+<!-- 特徴セクション -->
+<section class="features-section" id="features">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">FEATURES</span>
+      <h2>チェックサポーターの特徴</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F50D;</div>
+        <h3>かんたん検索</h3>
+        <p>都道府県と業種を選ぶだけ。3ステップで対象の補助金がすぐ見つかります。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F4CA;</div>
+        <h3>比較機能</h3>
+        <p>気になる補助金を選んで横並び比較。金額・条件・締切を一目で確認。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x2764;</div>
+        <h3>お気に入り保存</h3>
+        <p>気になる補助金をお気に入り登録。後からいつでも確認できます。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F504;</div>
+        <h3>定期更新</h3>
+        <p>補助金データを定期的にクロール・更新。常に最新の情報をお届けします。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ セクション -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">FAQ</span>
+      <h2>よくある質問</h2>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>利用料金はかかりますか？</summary>
+        <p>いいえ、完全無料でご利用いただけます。会員登録も不要です。</p>
+      </details>
+      <details class="faq-item">
+        <summary>掲載されている補助金情報は最新ですか？</summary>
+        <p>定期的に各都道府県の公式サイトをクロールし、データを更新しています。ただし、申請前には必ず公式サイトで最新情報をご確認ください。</p>
+      </details>
+      <details class="faq-item">
+        <summary>対象の補助金が見つかった後はどうすればいいですか？</summary>
+        <p>「詳細を見る」ボタンから公式サイトへアクセスし、申請要件を確認してください。申請手続きのサポートが必要な場合は「申請を相談する」からお問い合わせいただけます。</p>
+      </details>
+      <details class="faq-item">
+        <summary>全国すべての補助金が掲載されていますか？</summary>
+        <p>現在は主要な都道府県の補助金を掲載しています。順次対象を拡大し、全国1,741市区町村の補助金にも対応予定です。</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA セクション -->
+<section class="cta-section">
+  <div class="container">
+    <h2>あなたの会社に合う補助金を<br/>今すぐチェック</h2>
+    <p>3ステップの簡単検索で、対象の補助金・助成金がすぐにわかります。</p>
+    <a href="#search" class="hero-cta cta-white">
+      無料で検索する
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- フッター -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-icon">S</span>
+        <div>
+          <strong>助成金・補助金チェックサポーター</strong>
+          <p>&copy; 2025 hojokin-jp. All rights reserved.</p>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="#search">補助金検索</a>
+        <a href="#features">機能紹介</a>
+        <a href="#faq">よくある質問</a>
+      </div>
+    </div>
+    <p class="footer-disclaimer">
+      掲載情報は参考です。申請前に必ず各補助金の公式サイトで最新の要件をご確認ください。
+    </p>
+  </div>
 </footer>
 
 <script src="data.js"></script>
 <script src="app.js"></script>
+
+<!-- 構造化データ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "助成金・補助金チェックサポーター",
+  "description": "全国47都道府県の企業向け補助金・助成金を簡単チェック",
+  "url": "https://hojokin-jp.pages.dev/",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY"
+  }
+}
+</script>
 </body>
 </html>

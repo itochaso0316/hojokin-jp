@@ -1,0 +1,259 @@
+# ============================================================
+# hojokin-jp — 助成金・補助金チェックサポーター 設定ファイル
+# ============================================================
+# Cloudflare Pages + OpenClaw 連携
+# ============================================================
+
+# --- クライアント基本情報 ---
+client:
+  name: "助成金・補助金チェックサポーター"
+  name_short: "hojokin-jp"
+  id: "hojokin-jp"
+  domain: "hojokin-jp.pages.dev"   # 独自ドメイン取得後に変更
+  industry: "government-subsidy"
+  specialty: "subsidy-grant-search"
+  area:
+    primary_city: ""
+    prefecture: ""
+    neighboring: []
+    scope: "全国47都道府県"
+  description: "全国47都道府県の企業向け補助金・助成金を簡単チェック。業種・都道府県から対象を絞り込み。"
+
+# --- ブランド設定 ---
+brand:
+  owner_name: "hojokin-jp 編集部"
+  owner_title: "編集長"
+  founding_year: 2025
+  philosophy: "中小企業が活用できる補助金・助成金情報を、誰でも簡単にアクセスできるようにする"
+  differentiators:
+    - "47都道府県の補助金を横断検索できる唯一の無料ツール"
+    - "定期クロールによる最新データ維持"
+    - "中小企業・個人事業主目線のわかりやすいUI"
+    - "OpenClawによるファクトデータ自動収集"
+  tone: "professional-friendly"  # 信頼性がありつつ親しみやすい
+  content_order: ["accuracy", "freshness", "accessibility", "seo"]
+
+# --- サイト設定（Static HTML — Cloudflare Pages） ---
+site:
+  framework: "static-html"
+  content_path: "web/"
+  data_path: "data/"
+  base_url: "https://hojokin-jp.pages.dev"
+
+  pages:
+    - id: "top"
+      title: "トップページ（検索・LP）"
+      path: "web/index.html"
+    - id: "api"
+      title: "API（将来のD1連携）"
+      path: "web/worker.js"
+
+  data_files:
+    - id: "hojokin-data"
+      title: "補助金データ（JS）"
+      path: "web/data.js"
+      format: "javascript-const"
+    - id: "hojokin-export"
+      title: "補助金データ（JSON）"
+      path: "data/hojokin_export.json"
+      format: "json"
+    - id: "prefectures"
+      title: "都道府県リスト"
+      path: "data/prefectures.json"
+      format: "json"
+
+# --- SEO/LLMEO 設定 ---
+seo:
+  target_keywords:
+    tier1:
+      - keyword: "補助金 検索"
+        current_page: /
+        intent: "自社に合う補助金を探したい"
+      - keyword: "助成金 一覧"
+        current_page: /
+        intent: "使える助成金を一覧で見たい"
+      - keyword: "中小企業 補助金"
+        current_page: /
+        intent: "中小企業向け補助金を知りたい"
+    tier2:
+      - keyword: "都道府県 補助金 比較"
+        current_page: /
+      - keyword: "補助金 申請 サポート"
+        current_page: /
+      - keyword: "IT導入補助金"
+        current_page: /
+    tier3:
+      - keyword: "補助金 チェッカー"
+      - keyword: "助成金 無料 検索"
+
+  competitors:
+    - domain: "jmatch.jp"
+      name: "Jマッチ"
+      category: ["補助金マッチング"]
+    - domain: "mirasapo-plus.go.jp"
+      name: "ミラサポplus"
+      category: ["中小企業支援"]
+    - domain: "hojyokin-portal.jp"
+      name: "補助金ポータル"
+      category: ["補助金情報"]
+
+  analysis:
+    quickwin_range: [11, 30]
+    max_kd_priority: 30
+    min_volume: 100
+    rank_drop_alert: 5
+    rank_rise_note: 3
+
+# --- デプロイ設定（Git + Cloudflare Pages） ---
+deploy:
+  mode: "semi-auto"
+  framework: "cloudflare-pages-static"
+
+  git:
+    main_branch: "main"
+    content_branch_prefix: "content/"
+    feature_branch_prefix: "feat/"
+    fix_branch_prefix: "fix/"
+    commit_prefix:
+      content: "content:"
+      data: "data:"
+      design: "design:"
+      fix: "fix:"
+      feat: "feat:"
+
+  cloudflare:
+    project_name: "hojokin-jp"
+    preview_domain: "hojokin-jp.pages.dev"
+
+  build:
+    command: ""   # 静的HTMLなのでビルド不要
+    output_directory: "web"
+
+  approval_required:
+    client: false
+    technical: true
+
+# --- OpenClaw 連携（Mac mini） ---
+openclaw:
+  enabled: true
+  role: "data-crawler"
+  host: "mac-mini"
+  sync_method: "git"
+  description: >
+    Mac mini上で動作するOpenClawが、全国の都道府県公式サイトから
+    補助金・助成金データをクロールし、構造化データをGit経由で同期する。
+    MacBook Pro（Claude Cowork）側でUIやコンテンツを管理・デプロイする。
+
+  # クロール対象
+  crawl_targets:
+    - type: "prefectures"
+      description: "47都道府県の補助金ページ"
+      source_list: "data/prefectures.json"
+      schedule: "weekly"
+    - type: "national"
+      description: "国の補助金（経産省・中小企業庁等）"
+      urls:
+        - "https://mirasapo-plus.go.jp/"
+        - "https://www.chusho.meti.go.jp/"
+        - "https://www.meti.go.jp/covid-19/index.html"
+      schedule: "weekly"
+    - type: "municipalities"
+      description: "主要市区町村の補助金（Phase 2）"
+      enabled: false
+      schedule: "bi-weekly"
+
+  # データフロー
+  workflow:
+    - "OpenClaw（Mac mini）が都道府県公式サイトをクロール（robots.txt準拠）"
+    - "クロールデータをClaude Haiku APIで構造化（JSON化）"
+    - "data/hojokin_export.json に出力"
+    - "scripts/structure.py で web/data.js を更新"
+    - "data/*ブランチにcommit & push"
+    - "MacBook Pro側でpull → 確認 → main merge → Cloudflare Pages自動デプロイ"
+
+  content_rules:
+    branch_prefix: "data/"
+    auto_merge: false  # 人間がレビュー後にmerge
+    require_review: true
+
+  # 構造化ルール
+  structuring:
+    required_fields:
+      - "prefecture"     # 都道府県
+      - "name"           # 補助金名
+      - "target"         # 対象者
+      - "summary"        # 概要
+      - "url"            # 公式URL
+    optional_fields:
+      - "max_amount"     # 上限金額（円）
+      - "deadline"       # 申請期限
+      - "industries"     # 対象業種（配列）
+      - "requirements"   # 申請要件
+      - "contact"        # 問い合わせ先
+    structuring_model: "claude-haiku"  # コスト最適化
+
+# --- 品質管理設定 ---
+quality:
+  data_freshness:
+    max_age_days: 14     # 14日以上古いデータは要更新
+    alert_age_days: 7    # 7日で警告
+  link_check:
+    enabled: true
+    schedule: "weekly"   # 公式URLのリンク切れチェック
+  completeness:
+    min_fields_filled: 5  # 必須+任意で最低5フィールド
+
+# --- Slack連携設定 ---
+slack:
+  enabled: false   # 後で有効化
+  channels:
+    deploy: ""
+    data_update: ""
+    alerts: ""
+
+# --- スケジュールタスク一覧 ---
+scheduled_tasks:
+  - id: "openclaw-weekly-crawl"
+    cron: "0 3 * * 1"     # 毎週月曜 AM3:00（Mac mini側で実行）
+    description: "OpenClaw週次クロール（47都道府県）"
+    host: "mac-mini"
+  - id: "data-sync-check"
+    cron: "0 8 * * *"     # 毎朝8時
+    description: "OpenClawデータ同期チェック"
+    host: "macbook-pro"
+  - id: "link-check"
+    cron: "0 10 * * 3"    # 毎週水曜 AM10:00
+    description: "公式URLリンク切れチェック"
+    host: "macbook-pro"
+  - id: "seo-content-proposer"
+    cron: "0 9 * * 1"     # 毎週月曜 AM9:00
+    description: "SEOコンテンツ提案"
+    host: "macbook-pro"
+
+# --- コンテンツ制作エージェント連携 ---
+agents:
+  description: >
+    itochaso-contentproducer-agents のエージェントを活用して、
+    補助金関連のSEO記事・解説コンテンツを制作する。
+    OpenClawが収集したファクトデータを元に、エージェントがコンテンツを生成。
+  dispatch_rules:
+    - trigger: ["記事", "コラム", "解説"]
+      agents: ["content-strategist.md", "writer.md"]
+      knowledge: ["brand-identity.md"]
+    - trigger: ["SEO", "検索", "キーワード"]
+      agents: ["seo-aieo-meo-monitor.md", "seo-content-proposer.md"]
+    - trigger: ["データ", "クロール", "更新"]
+      agents: ["data-ingest.md"]
+    - trigger: ["デザイン", "UI", "CSS"]
+      agents: ["designer.md"]
+      knowledge: ["design-guide.md", "css-dictionary.md"]
+
+# --- データ取り込み ---
+data_ingest:
+  enabled: true
+  source: "openclaw"
+  categories:
+    - subsidy-data          # 補助金データ
+    - prefecture-updates    # 都道府県更新情報
+    - policy-changes        # 制度変更情報
+  schedule: "0 9 * * *"

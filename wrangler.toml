@@ -9,5 +9,12 @@ binding = "DB"
 database_name = "hojokin-jp"
 database_id = "placeholder-replace-after-d1-create"
 
+# 国税庁法人番号API アプリケーションID
+# Cloudflare ダッシュボード > Workers > Settings > Variables で設定するか、
+# wrangler secret put NTA_APP_ID で暗号化して設定
+# 取得: https://www.houjin-bangou.nta.go.jp/webapi/
+[vars]
+# NTA_APP_ID = "your-app-id-here"  # secretで管理推奨
+
 # Cloudflare Pages でフロントを配信する場合はこちらを使う
 # wrangler pages deploy web/ --project-name hojokin-jp
