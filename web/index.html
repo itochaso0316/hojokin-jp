@@ -87,49 +87,11 @@
 
     <div class="search-card">
 
-      <!-- 法人番号・会社名で自動入力 -->
-      <div class="corp-lookup-block">
-        <div class="corp-lookup-header">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg>
-          <span>法人番号・会社名から自動入力</span>
-          <button class="corp-toggle" id="corp-toggle" aria-expanded="false">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-        </div>
-        <div class="corp-lookup-body" id="corp-lookup-body" style="display:none;">
-          <p class="corp-hint">法人番号（13桁）または会社名を入力すると、都道府県が自動で設定されます。</p>
-          <div class="corp-tabs">
-            <button class="corp-tab active" data-tab="number">法人番号で検索</button>
-            <button class="corp-tab" data-tab="name">会社名で検索</button>
-          </div>
-          <!-- 法人番号タブ -->
-          <div class="corp-tab-content active" id="tab-number">
-            <div class="corp-input-row">
-              <input type="text" id="corp-number" class="input-modern" maxlength="13" inputmode="numeric" pattern="\d{13}" placeholder="例: 7000012050002（13桁）" />
-              <button class="btn-corp-search" id="btn-corp-number">検索</button>
-            </div>
-          </div>
-          <!-- 会社名タブ -->
-          <div class="corp-tab-content" id="tab-name">
-            <div class="corp-input-row">
-              <input type="text" id="corp-name" class="input-modern" placeholder="例: トヨタ自動車" />
-              <button class="btn-corp-search" id="btn-corp-name">検索</button>
-            </div>
-            <div class="corp-candidates" id="corp-candidates" style="display:none;"></div>
-          </div>
-          <!-- 結果表示 -->
-          <div class="corp-result" id="corp-result" style="display:none;">
-            <div class="corp-result-card">
-              <div class="corp-result-name" id="corp-result-name"></div>
-              <div class="corp-result-meta" id="corp-result-meta"></div>
-              <button class="btn-corp-apply" id="btn-corp-apply">この情報で検索に反映する</button>
-            </div>
-          </div>
-          <div class="corp-error" id="corp-error" style="display:none;"></div>
-          <div class="corp-loading" id="corp-loading" style="display:none;">
-            <div class="spinner"></div>
-            <span>検索中...</span>
-          </div>
+      <!-- フリーワード検索 -->
+      <div class="form-block keyword-block">
+        <div class="keyword-row">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" id="keyword-search" class="input-keyword" placeholder="キーワードで絞り込み（例: DX、創業、設備投資、賃上げ）" />
         </div>
       </div>
 
@@ -137,9 +99,11 @@
       <div class="step-indicator">
         <div class="step active" data-step="1"><span>1</span>地域</div>
         <div class="step-line"></div>
-        <div class="step" data-step="2"><span>2</span>業種</div>
+        <div class="step" data-step="2"><span>2</span>業種・規模</div>
         <div class="step-line"></div>
-        <div class="step" data-step="3"><span>3</span>検索</div>
+        <div class="step" data-step="3"><span>3</span>目的</div>
+        <div class="step-line"></div>
+        <div class="step" data-step="4"><span>4</span>検索</div>
       </div>
 
       <!-- 都道府県選択（地図 + ドロップダウン） -->
@@ -187,11 +151,41 @@
         </div>
       </div>
 
-      <!-- 従業員数（オプション） -->
+      <!-- 事業ステージ -->
       <div class="form-block">
         <label class="form-label">
           <span class="label-icon">3</span>
-          従業員数（任意）
+          あてはまるものを選択（複数可）
+        </label>
+        <div class="filter-group">
+          <p class="filter-sublabel">事業ステージ</p>
+          <div class="chip-row">
+            <label class="filter-chip"><input type="checkbox" class="stage-check" value="創業" /><span>&#x1F331; 創業・スタートアップ</span></label>
+            <label class="filter-chip"><input type="checkbox" class="stage-check" value="中小企業" /><span>&#x1F3E2; 中小企業</span></label>
+            <label class="filter-chip"><input type="checkbox" class="stage-check" value="小規模" /><span>&#x1F3E0; 小規模事業者</span></label>
+            <label class="filter-chip"><input type="checkbox" class="stage-check" value="個人事業" /><span>&#x1F464; 個人事業主</span></label>
+            <label class="filter-chip"><input type="checkbox" class="stage-check" value="事業承継" /><span>&#x1F4E4; 事業承継</span></label>
+          </div>
+
+          <p class="filter-sublabel">利用目的</p>
+          <div class="chip-row">
+            <label class="filter-chip"><input type="checkbox" class="purpose-check" value="DX" /><span>&#x1F4BB; DX・IT導入</span></label>
+            <label class="filter-chip"><input type="checkbox" class="purpose-check" value="設備" /><span>&#x2699; 設備投資</span></label>
+            <label class="filter-chip"><input type="checkbox" class="purpose-check" value="研究" /><span>&#x1F52C; 研究開発</span></label>
+            <label class="filter-chip"><input type="checkbox" class="purpose-check" value="人材" /><span>&#x1F469;&#x200D;&#x1F4BC; 人材育成・採用</span></label>
+            <label class="filter-chip"><input type="checkbox" class="purpose-check" value="賃上げ" /><span>&#x1F4B0; 賃上げ</span></label>
+            <label class="filter-chip"><input type="checkbox" class="purpose-check" value="販路" /><span>&#x1F30D; 販路開拓・海外展開</span></label>
+            <label class="filter-chip"><input type="checkbox" class="purpose-check" value="省エネ" /><span>&#x1F33F; 省エネ・環境</span></label>
+            <label class="filter-chip"><input type="checkbox" class="purpose-check" value="観光" /><span>&#x1F3D6; 観光・地域振興</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 従業員数（オプション） -->
+      <div class="form-block">
+        <label class="form-label">
+          <span class="label-icon opt">任意</span>
+          従業員数
         </label>
         <input type="number" id="employee-count" class="input-modern" min="1" max="99999" placeholder="例: 10" />
       </div>

@@ -112,10 +112,26 @@ function initRegionChips() {
 }
 
 // ============================================================
-// 業種チップ
+// 業種チップ + フィルターチップ（共通ロジック）
 // ============================================================
 function initIndustryChips() {
+  // 業種チップ
   document.querySelectorAll(".industry-chip").forEach(label => {
+    const cb = label.querySelector("input");
+    label.addEventListener("click", (e) => {
+      if (e.target === cb) return;
+      cb.checked = !cb.checked;
+      label.classList.toggle("checked", cb.checked);
+      updateStepIndicator();
+    });
+    cb.addEventListener("change", () => {
+      label.classList.toggle("checked", cb.checked);
+      updateStepIndicator();
+    });
+  });
+
+  // 事業ステージ・利用目的チップ（filter-chip共通）
+  document.querySelectorAll(".filter-chip").forEach(label => {
     const cb = label.querySelector("input");
     label.addEventListener("click", (e) => {
       if (e.target === cb) return;
@@ -174,11 +190,24 @@ function onSearch() {
   const regionFilter = sel.dataset.regionFilter || "";
   const pref = sel.value;
   const employees = parseInt(document.getElementById("employee-count").value) || 0;
+  const keyword = (document.getElementById("keyword-search").value || "").trim();
+
   const checkedIndustries = Array.from(
     document.querySelectorAll(".industry-check:checked")
   ).map(cb => cb.value);
 
-  const results = filterHojokin({ pref, regionFilter, employees, industries: checkedIndustries });
+  const checkedStages = Array.from(
+    document.querySelectorAll(".stage-check:checked")
+  ).map(cb => cb.value);
+
+  const checkedPurposes = Array.from(
+    document.querySelectorAll(".purpose-check:checked")
+  ).map(cb => cb.value);
+
+  const results = filterHojokin({
+    pref, regionFilter, employees, industries: checkedIndustries,
+    stages: checkedStages, purposes: checkedPurposes, keyword
+  });
   currentResults = results;
 
   sortResults();
@@ -189,7 +218,7 @@ function onSearch() {
   resultsSection.scrollIntoView({ behavior: "smooth" });
 }
 
-function filterHojokin({ pref, regionFilter, employees, industries }) {
+function filterHojokin({ pref, regionFilter, employees, industries, stages, purposes, keyword }) {
   const source = typeof HOJOKIN_DATA !== "undefined" ? HOJOKIN_DATA : [];
   return source.filter(item => {
     // 地方フィルター
@@ -205,6 +234,42 @@ function filterHojokin({ pref, regionFilter, employees, industries }) {
         (item.industries || []).includes(ind) || (item.industries || []).includes("その他")
       );
       if (!hasMatch) return false;
+    }
+
+    // 事業ステージフィルター（target + summary をテキストマッチ）
+    if (stages.length > 0) {
+      const text = `${item.target || ""} ${item.summary || ""} ${item.name || ""}`.toLowerCase();
+      const hasMatch = stages.some(stage => text.includes(stage.toLowerCase()));
+      if (!hasMatch) return false;
+    }
+
+    // 利用目的フィルター（name + summary + target をテキストマッチ）
+    if (purposes.length > 0) {
+      const text = `${item.name || ""} ${item.summary || ""} ${item.target || ""}`.toLowerCase();
+      // 目的キーワードの同義語マッピング
+      const synonyms = {
+        "DX": ["dx","デジタル","it","ict","情報","システム","ai","iot"],
+        "設備": ["設備","機械","導入","整備"],
+        "研究": ["研究","開発","r&d","実用化","技術"],
+        "人材": ["人材","雇用","採用","研修","育成","女性活躍"],
+        "賃上げ": ["賃上げ","賃金","給与","給料","環境整備"],
+        "販路": ["販路","海外","輸出","展示","マーケティング","販売"],
+        "省エネ": ["省エネ","環境","グリーン","脱炭素","再エネ","電気料金","エネルギー"],
+        "観光": ["観光","宿泊","旅行","インバウンド","コンベンション"],
+      };
+      const hasMatch = purposes.some(purpose => {
+        const words = synonyms[purpose] || [purpose.toLowerCase()];
+        return words.some(w => text.includes(w));
+      });
+      if (!hasMatch) return false;
+    }
+
+    // フリーワード検索（name + summary + target + prefecture）
+    if (keyword) {
+      const text = `${item.name || ""} ${item.summary || ""} ${item.target || ""} ${item.prefecture || ""}`.toLowerCase();
+      const keywords = keyword.toLowerCase().split(/[\s　,、]+/).filter(Boolean);
+      const allMatch = keywords.every(kw => text.includes(kw));
+      if (!allMatch) return false;
     }
 
     return true;
