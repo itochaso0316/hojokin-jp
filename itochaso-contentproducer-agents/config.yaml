@@ -59,6 +59,11 @@ site:
       title: "中小企業の補助金ガイド2026"
       path: "web/guides/sme-subsidy-2026.html"
       seo_target: "中小企業 補助金 2026"
+    - id: "navigator"
+      title: "補助金申請ナビゲーター"
+      path: "web/navigator.html"
+      seo_target: "補助金 申請 サポート AI"
+      description: "AIチャット型ウィザードで事業計画書ドラフトを自動生成"
 
   data_files:
     - id: "hojokin-data"
@@ -261,6 +266,9 @@ agents:
     - trigger: ["デザイン", "UI", "CSS"]
       agents: ["designer.md"]
       knowledge: ["design-guide.md", "css-dictionary.md"]
+    - trigger: ["申請", "事業計画", "ナビゲーター", "企画書"]
+      agents: ["navigator.md"]
+      knowledge: ["brand-identity.md"]
 
 # --- データ取り込み ---
 data_ingest:

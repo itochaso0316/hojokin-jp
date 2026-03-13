@@ -684,8 +684,9 @@ function closeCompareModal() {
 // 申請相談
 // ============================================================
 function onConsult(name) {
-  alert(`「${name}」の申請相談ページは準備中です。\n近日公開予定！`);
-  return false;
+  // Navigatorページに補助金名をパラメータとして渡す
+  const encodedName = encodeURIComponent(name);
+  window.location.href = `navigator.html?subsidy=${encodedName}`;
 }
 
 // ============================================================
